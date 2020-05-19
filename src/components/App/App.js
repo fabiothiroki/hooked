@@ -1,46 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import "./App.css";
-import Header from "./Header/Header";
-import Movie from "./Movie/Movie";
-import Search from "./Search/Search";
+import Header from "../Header/Header";
+import Movie from "../Movie/Movie";
+import Search from "../Search/Search";
+import { initialState, reducer } from "./reducer";
 
 const apiKey = "45f0782a";
 const MOVIE_API_URL = `https://www.omdbapi.com/?s=man&apikey=${apiKey}`; // you should replace this with yours
 
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
     console.log('use effect')
     fetch(MOVIE_API_URL)
       .then(response => response.json())
       .then(jsonResponse => {
-        setMovies(jsonResponse.Search);
-        setLoading(false);
+        dispatch({
+          type: "SEARCH_MOVIES_SUCCESS",
+          payload: jsonResponse.Search
+        });
       });
   }, []);
 
     const search = searchValue => {
-      setLoading(true);
-      setErrorMessage(null);
+      dispatch({
+      	type: "SEARCH_MOVIES_REQUEST"
+    	});
 
       fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=${apiKey}`)
         .then(response => response.json())
         .then(jsonResponse => {
           if (jsonResponse.Response === "True") {
-            setMovies(jsonResponse.Search);
-            setLoading(false);
+            dispatch({
+              type: "SEARCH_MOVIES_SUCCESS",
+              payload: jsonResponse.Search
+            });
           } else {
-            setErrorMessage(jsonResponse.Error);
-            setLoading(false);
+            dispatch({
+              type: "SEARCH_MOVIES_FAILURE",
+              error: jsonResponse.Error
+            });
           }
         });
   	};
 
-    
+    const { movies, errorMessage, loading } = state;
     return (
      <div className="App">
       <Header text="HOOKED" />

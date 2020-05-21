@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import "./App.css";
 import Header from "../Header/Header";
 import Movie from "../Movie/Movie";
@@ -13,7 +13,6 @@ const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    console.log('use effect')
     fetch(MOVIE_API_URL)
       .then(response => response.json())
       .then(jsonResponse => {

@@ -13,7 +13,6 @@ const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    console.log('use effect')
     fetch(MOVIE_API_URL)
       .then(response => response.json())
       .then(jsonResponse => {
